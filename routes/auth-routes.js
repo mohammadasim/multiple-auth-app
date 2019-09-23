@@ -8,16 +8,20 @@ router.get("/", (req, res) => {
 });
 
 router.get("/logout", (req, res) => {
-  res.send("logging out");
+  console.log("the logout url invoked");
+  req.logOut();
+  res.redirect("/");
 });
 
 
 router.get("/twitter",passport.authenticate('twitter',{
-	scope:['profile', 'token', 'tokenSecret']
+	scope:['profile']
 }));
 
-router.get("/twitter/callback", passport.authenticate('twitter'),(req, res) => {
+router.get("/twitter/callback", passport.authenticate('twitter',{ failureRedirect: '/login' }),(req, res) => {
     res.redirect("/secret");
 });
+
+
 
 module.exports = router;

@@ -1,11 +1,9 @@
 const express = require("express"),
     bodyParser = require("body-parser"),
-    mongoose = require("./connection"),
     passport = require("passport"),
     session = require("express-session"),
-    TwitterStategy = require("passport-twitter"),
     authRoutes = require("./routes/auth-routes"),
-    passportSetup = require("./config/passport-setup")
+    passportSetup = require("./config/passport-setup"),
     User = require("./models/user")
 
 
@@ -24,17 +22,12 @@ app.use(session({
     }
 }));
 
-app.use('/login', authRoutes);
+
 app.use(passport.initialize());
 app.use(passport.session());
 
-passport.serializeUser(function (user, cb) {
-    cb(null, user);
-});
 
-passport.deserializeUser(function (obj, cb) {
-    cb(null, obj);
-});
+app.use('/login', authRoutes);
 
 /******************************************** ROUTES **************************************************/
 app.get("/", (req, res) => {
@@ -42,8 +35,8 @@ app.get("/", (req, res) => {
 });
 
 
-app.get("/secret", (req, res) => {
-    res.render("secret");
+app.get("/secret", require("connect-ensure-login").ensureLoggedIn(),(req, res) => {
+    res.render("secret", {user: req.user});
 });
 
 

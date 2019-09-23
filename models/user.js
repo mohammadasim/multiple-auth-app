@@ -4,7 +4,7 @@ var userSchema = new mongoose.Schema({
     userName: String,
     twitterId: String,
     oauthToken: String,
-    oauthToken_secret: String
+    tockenSecret: String
   });
   // Export module
   module.exports = mongoose.model('User', userSchema);
