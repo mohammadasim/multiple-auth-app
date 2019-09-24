@@ -4,24 +4,35 @@ const session = require("express-session");
 
 //auth routes
 router.get("/", (req, res) => {
-    res.render("login");
+  res.render("login");
 });
 
 router.get("/logout", (req, res) => {
-  console.log("the logout url invoked");
   req.logOut();
   res.redirect("/");
 });
 
 
-router.get("/twitter",passport.authenticate('twitter',{
-	scope:['profile']
+router.get("/twitter", passport.authenticate('twitter', {
+  scope: ['profile']
 }));
 
-router.get("/twitter/callback", passport.authenticate('twitter',{ failureRedirect: '/login' }),(req, res) => {
-    res.redirect("/secret");
+router.get("/twitter/callback", passport.authenticate('twitter', {
+  failureRedirect: '/login'
+}), (req, res) => {
+  res.redirect("/secret");
 });
 
+
+router.get("/google", passport.authenticate('google', {
+  scope: ['profile']
+}));
+
+router.get("/google/callback", passport.authenticate('google', {
+  failureRedirect: '/login'
+}),(req, res) => {
+  res.redirect("/secret");
+});
 
 
 module.exports = router;

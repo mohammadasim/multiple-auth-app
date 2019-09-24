@@ -1,6 +1,8 @@
 const passport = require("passport"),
     TwitterStategy = require("passport-twitter"),
-    User = require("../models/user")
+    GoogleStrategy = require("passport-google-oauth20"),
+    User = require("../models/user"),
+    keys = require("./keys")
 
 
 // Once the callback function is finished the following functions are invoked.
@@ -29,8 +31,8 @@ passport.use(new TwitterStategy({
             new User({
                 userName: profile.username,
                 twitterId: profile.id,
-                oauthToken: token,
-                tockenSecret: tokenSecret
+                twitterOauthToken: token,
+                twitterTockenSecret: tokenSecret
             }).save().then((newUser)=>{
                 // done enabled us to exit the passportjs code, null in the done method can be replaced with err, we are setting err to null, assuming
                 // no error will be thrown.
@@ -39,4 +41,27 @@ passport.use(new TwitterStategy({
         }
     })
     
+}));
+
+//******************************************** GOOGLE PASSPORT STRTEGY SETUP *******************************************************/
+
+passport.use(new GoogleStrategy({
+    clientID: keys.google.client_id,
+    clientSecret: keys.google.client_secret,
+    callbackURL: "/login/google/callback"
+},(accessToken, refreshToken, profile, done) =>{
+    User.findOne({googleId: profile.id}).then((currentUser)=>{
+        if(currentUser){
+            done(null, currentUser);
+        }
+        else{
+            User.create({
+                userName: profile.displayName,
+                googleId: profile.id,
+                googleAccessToken: accessToken
+            }).then((newUser)=>{
+                done(null, newUser);
+            });
+        }
+    });
 }));
