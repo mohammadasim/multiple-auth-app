@@ -34,5 +34,11 @@ router.get("/google/callback", passport.authenticate('google', {
   res.redirect("/secret");
 });
 
+router.get("/linkdin", passport.authenticate('linkedin'));
+
+router.get("/linkdin/callback", passport.authenticate('linkedin'),(req, res) => {
+  
+});
+
 
 module.exports = router;

@@ -4,7 +4,8 @@ const express = require("express"),
     session = require("express-session"),
     authRoutes = require("./routes/auth-routes"),
     passportSetup = require("./config/passport-setup"),
-    User = require("./models/user")
+    User = require("./models/user"),
+    keys = require("./config/keys")
 
 
 const app = express();
@@ -14,7 +15,7 @@ app.use(bodyParser.urlencoded({
 }));
 app.set("view engine", "ejs");
 app.use(session({
-    secret: process.env.SESSION_SECRET,
+    secret: keys.session.secret,
     resave: false,
     saveUninitialized: false,
     cookie: {

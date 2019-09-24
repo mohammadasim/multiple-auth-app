@@ -1,6 +1,7 @@
 const passport = require("passport"),
     TwitterStategy = require("passport-twitter"),
     GoogleStrategy = require("passport-google-oauth20"),
+    LinkedInStrategy = require('passport-linkedin-oauth2').Strategy,
     User = require("../models/user"),
     keys = require("./keys")
 
@@ -18,9 +19,11 @@ passport.deserializeUser((id, done) =>{
         done(null, user);
     })
 });
+
+//********************************* TWITTER PASSPORT STRATEGY *********************/
 passport.use(new TwitterStategy({
-    consumerKey: process.env.TWITTER_API_KEY,
-    consumerSecret: process.env.TWITTER_API_SECRET_KEY,
+    consumerKey: keys.twitter.consumerKey,
+    consumerSecret: keys.twitter.consumerSecret,
     callbackURL: "http://127.0.0.1:5000/login/twitter/callback"
 },(token, tokenSecret, profile, done) => {
     User.findOne({twitterId: profile.id}).then((currentUser)=>{
@@ -64,4 +67,15 @@ passport.use(new GoogleStrategy({
             });
         }
     });
+}));
+
+//**************************************** LINKDIN PASSPORT STRATEGY ***********************************/
+
+passport.use(new LinkedInStrategy({
+    clientID: keys.linkdin.client_id,
+    clientSecret: keys.linkdin.client_secret,
+    callbackURL: "http://127.0.0.1:5000/login/linkdin/callback",
+    scope: ['r_emailaddress', 'r_basicprofile']
+},(accessToken, refreshToken, profile, cb)=>{
+    console.log("The Linkdin passport callback function has been invoked");
 }));
